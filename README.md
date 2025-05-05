@@ -1,7 +1,7 @@
 # ResultTypes
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://iamed2.github.io/ResultTypes.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://iamed2.github.io/ResultTypes.jl/dev)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://0x0f0f0f.github.io/ResultTypes.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://0x0f0f0f.github.io/ResultTypes.jl/dev)
 [![Build Status](https://travis-ci.com/iamed2/ResultTypes.jl.svg?branch=master)](https://travis-ci.com/iamed2/ResultTypes.jl)
 [![Codecov](https://codecov.io/gh/iamed2/ResultTypes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/iamed2/ResultTypes.jl)
 
@@ -42,11 +42,11 @@ We can take advantage of automatic conversions in function returns (a Julia 0.5 
 
 ```julia
 function integer_division(x::Int, y::Int)::Result{Int, DivideError}
-    if y == 0
-        return DivideError()
-    else
-        return div(x, y)
-    end
+		if y == 0
+				return DivideError()
+		else
+				return div(x, y)
+		end
 end
 ```
 
@@ -74,13 +74,13 @@ Using the function above, we can use `@code_warntype` to verify that the compile
 julia> @code_warntype integer_division(3, 2)
 Body::Result{Int64,DivideError}
 2 1 ─ %1 = (y === 0)::Bool                                                                                       │╻     ==
-  └──      goto #3 if not %1                                                                                     │
+	└──      goto #3 if not %1                                                                                     │
 3 2 ─ %3 = %new(Result{Int64,DivideError}, nothing, $(QuoteNode(DivideError())))::Result{Int64,DivideError}      │╻╷    convert
-  └──      return %3                                                                                             │
+	└──      return %3                                                                                             │
 5 3 ─ %5 = (Base.checked_sdiv_int)(x, y)::Int64                                                                  │╻     div
-  │   %6 = %new(Some{Int64}, %5)::Some{Int64}                                                                    ││╻╷╷╷  Type
-  │   %7 = %new(Result{Int64,DivideError}, %6, nothing)::Result{Int64,DivideError}                               │││
-  └──      return %7                                                                                             │
+	│   %6 = %new(Some{Int64}, %5)::Some{Int64}                                                                    ││╻╷╷╷  Type
+	│   %7 = %new(Result{Int64,DivideError}, %6, nothing)::Result{Int64,DivideError}                               │││
+	└──      return %7                                                                                             │
 ```
 
 ### Experimental
@@ -94,13 +94,13 @@ Here's our wrapping function for `div`:
 
 ```julia
 @noinline function func1(x, y)
-    local z
-    try
-        z = div(x, y)
-    catch e
-        z = 0
-    end
-    return z
+		local z
+		try
+				z = div(x, y)
+		catch e
+				z = 0
+		end
+		return z
 end
 ```
 
@@ -108,12 +108,12 @@ and for `integer_division`:
 
 ```julia
 @noinline function func2(x, y)
-    r = integer_division(x, y)
-    if ResultTypes.iserror(r)
-        return 0
-    else
-        return unwrap(r)
-    end
+		r = integer_division(x, y)
+		if ResultTypes.iserror(r)
+				return 0
+		else
+				return unwrap(r)
+		end
 end
 ```
 
@@ -124,34 +124,34 @@ julia> using BenchmarkTools, Statistics
 
 julia> t1 = @benchmark for i = 1:10 func1(3, i % 2) end
 BenchmarkTools.Trial:
-  memory estimate:  0 bytes
-  allocs estimate:  0
-  --------------
-  minimum time:     121.664 μs (0.00% GC)
-  median time:      122.652 μs (0.00% GC)
-  mean time:        124.350 μs (0.00% GC)
-  maximum time:     388.198 μs (0.00% GC)
-  --------------
-  samples:          10000
-  evals/sample:     1
+	memory estimate:  0 bytes
+	allocs estimate:  0
+	--------------
+	minimum time:     121.664 μs (0.00% GC)
+	median time:      122.652 μs (0.00% GC)
+	mean time:        124.350 μs (0.00% GC)
+	maximum time:     388.198 μs (0.00% GC)
+	--------------
+	samples:          10000
+	evals/sample:     1
 
 julia> t2 = @benchmark for i = 1:10 func2(3, i % 2) end
 BenchmarkTools.Trial:
-  memory estimate:  0 bytes
-  allocs estimate:  0
-  --------------
-  minimum time:     18.853 ns (0.00% GC)
-  median time:      21.078 ns (0.00% GC)
-  mean time:        21.183 ns (0.00% GC)
-  maximum time:     275.057 ns (0.00% GC)
-  --------------
-  samples:          10000
-  evals/sample:     997
+	memory estimate:  0 bytes
+	allocs estimate:  0
+	--------------
+	minimum time:     18.853 ns (0.00% GC)
+	median time:      21.078 ns (0.00% GC)
+	mean time:        21.183 ns (0.00% GC)
+	maximum time:     275.057 ns (0.00% GC)
+	--------------
+	samples:          10000
+	evals/sample:     997
 
 julia> judge(mean(t2), mean(t1))
 BenchmarkTools.TrialJudgement:
-  time:   -99.98% => improvement (5.00% tolerance)
-  memory: +0.00% => invariant (1.00% tolerance)
+	time:   -99.98% => improvement (5.00% tolerance)
+	memory: +0.00% => invariant (1.00% tolerance)
 ```
 
 As we can see, we get a huge speed improvement without allocating any extra heap memory.
@@ -161,34 +161,34 @@ It's also interesting to look at the cost when no error occurs:
 ```julia
 julia> t1 = @benchmark for i = 1:10 func1(3, 1) end
 BenchmarkTools.Trial:
-  memory estimate:  0 bytes
-  allocs estimate:  0
-  --------------
-  minimum time:     115.060 ns (0.00% GC)
-  median time:      118.042 ns (0.00% GC)
-  mean time:        118.616 ns (0.00% GC)
-  maximum time:     279.901 ns (0.00% GC)
-  --------------
-  samples:          10000
-  evals/sample:     918
+	memory estimate:  0 bytes
+	allocs estimate:  0
+	--------------
+	minimum time:     115.060 ns (0.00% GC)
+	median time:      118.042 ns (0.00% GC)
+	mean time:        118.616 ns (0.00% GC)
+	maximum time:     279.901 ns (0.00% GC)
+	--------------
+	samples:          10000
+	evals/sample:     918
 
 julia> t2 = @benchmark for i = 1:10 func2(3, 1) end
 BenchmarkTools.Trial:
-  memory estimate:  0 bytes
-  allocs estimate:  0
-  --------------
-  minimum time:     28.775 ns (0.00% GC)
-  median time:      30.516 ns (0.00% GC)
-  mean time:        31.290 ns (0.00% GC)
-  maximum time:     74.936 ns (0.00% GC)
-  --------------
-  samples:          10000
-  evals/sample:     995
+	memory estimate:  0 bytes
+	allocs estimate:  0
+	--------------
+	minimum time:     28.775 ns (0.00% GC)
+	median time:      30.516 ns (0.00% GC)
+	mean time:        31.290 ns (0.00% GC)
+	maximum time:     74.936 ns (0.00% GC)
+	--------------
+	samples:          10000
+	evals/sample:     995
 
 julia> judge(mean(t2), mean(t1))
 BenchmarkTools.TrialJudgement:
-  time:   -73.62% => improvement (5.00% tolerance)
-  memory: +0.00% => invariant (1.00% tolerance)
+	time:   -73.62% => improvement (5.00% tolerance)
+	memory: +0.00% => invariant (1.00% tolerance)
 ```
 
 It's _still faster_ to avoid `try` and use `Result`, even when the error condition is never triggered.
